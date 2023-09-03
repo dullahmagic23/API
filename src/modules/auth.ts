@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { log } from "console";
 
 
 export const comparePasswords = (password,hashedPassword)=>{
@@ -21,7 +22,10 @@ export const createJWT = (user)=>{
 }
 
 export const protect =  (req, res, next)=>{
-    const bearer = req.headers.authorization
+
+    // const bearer = getToken(req.headers['cookie']) brower intergration
+    const bearer = req.headers.authorization;
+    
     if (!bearer){
         res.status(401)
         res.json({message:"Unauthorized"})
@@ -42,4 +46,13 @@ export const protect =  (req, res, next)=>{
         return;
     }
     next();
+}
+
+export const getToken = (str) =>{
+    const bits = str.split(';');
+    for(const bit of bits){
+        if(bit.includes("authorization=Bearer")){
+            return bit
+        }
+    }
 }
